@@ -5,14 +5,24 @@ namespace App\DataFixtures;
 use App\Entity\Commentaire;
 use App\Entity\Region;
 use App\Entity\Restaurant;
+use App\Entity\User;
 use App\Entity\Ville;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    public function __construct(private UserPasswordHasherInterface $hasher)
+    {
+    }
+
     public function load(ObjectManager $manager): void
     {
+        $user = (new User()) ->setEmail('alice@test.fr');
+        $user->setPassword($this->hasher->hashPassword($user, 'password'));
+        $manager->persist($user);
+
         $regions = [];
         foreach (['Île-de-France', 'Auvergne-Rhône-Alpes', "Provence-Alpes-Côte d'Azur", 'Nouvelle-Aquitaine', 'Ille-et-Vilaine', 'Univers'] as $nom) {
             $region = (new Region())->setNom($nom);
@@ -51,10 +61,10 @@ class AppFixtures extends Fixture
                 ->setVille($villes[$villeNom]);
             $manager->persist($restaurant);
 
-            $commentaire = (new Commentaire())->setRestaurant($restaurant)->setContenu('Glorpissimement glorpesque !')->setNote(5);
+            $commentaire = (new Commentaire())->setRestaurant($restaurant)->setAuteur($user)->setContenu('Glorpissimement glorpesque !')->setNote(5);
             $manager->persist($commentaire);
-            $manager->persist((new Commentaire())->setRestaurant($restaurant)->setParent($commentaire)->setContenu('Merci pour votre avis !'));
-            $manager->persist((new Commentaire())->setRestaurant($restaurant)->setContenu('૮ ˶ᵔ ᵕ ᵔ˶ ა')->setNote(3));
+            $manager->persist((new Commentaire())->setRestaurant($restaurant)->setAuteur($user)->setParent($commentaire)->setContenu('Merci pour votre avis !'));
+            $manager->persist((new Commentaire())->setRestaurant($restaurant)->setAuteur($user)->setContenu('૮ ˶ᵔ ᵕ ᵔ˶ ა')->setNote(3));
         }
 
         $manager->flush();

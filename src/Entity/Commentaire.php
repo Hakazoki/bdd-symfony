@@ -41,6 +41,10 @@ class Commentaire
     #[ORM\OrderBy(['dateCreation' => 'ASC'])]
     private Collection $reponses;
 
+    #[ORM\ManyToOne(inversedBy: 'commentaires')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $auteur = null;
+
     public function __construct()
     {
         $this->dateCreation = new \DateTimeImmutable();
@@ -135,6 +139,18 @@ class Commentaire
                 $reponse->setParent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAuteur(): ?User
+    {
+        return $this->auteur;
+    }
+
+    public function setAuteur(?User $auteur): static
+    {
+        $this->auteur = $auteur;
 
         return $this;
     }

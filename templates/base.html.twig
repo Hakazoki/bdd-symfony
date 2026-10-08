@@ -24,6 +24,11 @@
             <a href="{{ path('app_restaurant_add') }}">Ajouter un restaurant</a> |
             <a href="{{ path('app_ville_list') }}">Villes</a> |
             <a href="{{ path('app_region_list') }}">Régions</a>
+            {% if app.user %}
+                {{ app.user.userIdentifier }} | <a href="{{ path('app_logout') }}">Déconnexion</a>
+            {% else %}
+                <a href="{{ path('app_login') }}">Connexion</a> | <a href="{{ path('app_register') }}">Inscription</a>
+            {% endif %}
         </nav>
         <hr>
 

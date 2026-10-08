@@ -1,6 +1,7 @@
 <article>
     <p>
         {% if commentaire.note is not null %}<strong>{{ commentaire.note }}/5</strong> — {% endif %}
+        {% if commentaire.auteur %}par {{ commentaire.auteur.email }}, {% endif %}
         le {{ commentaire.dateCreation|date('d/m/Y à H:i') }}
     </p>
     <p>{{ commentaire.contenu|nl2br }}</p>

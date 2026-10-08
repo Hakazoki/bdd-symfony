@@ -10,13 +10,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class CommentaireController extends AbstractController
 {
     #[Route('/restaurant/{id}/commentaire/add', name: 'app_commentaire_add', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_USER')]
     public function add(Request $request, Restaurant $restaurant, EntityManagerInterface $em): Response
     {
-        $commentaire = (new Commentaire())->setRestaurant($restaurant);
+        $commentaire = (new Commentaire())->setRestaurant($restaurant)->setAuteur($this->getUser());
         $form = $this->createForm(CommentaireType::class, $commentaire);
         $form->handleRequest($request);
 
@@ -32,9 +34,10 @@ final class CommentaireController extends AbstractController
     }
 
     #[Route('/commentaire/{id}/reply', name: 'app_commentaire_reply', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_USER')]
     public function reply(Request $request, Commentaire $parent, EntityManagerInterface $em): Response
     {
-        $reponse = (new Commentaire())->setParent($parent)->setRestaurant($parent->getRestaurant());
+        $reponse = (new Commentaire())->setParent($parent)->setRestaurant($parent->getRestaurant())->setAuteur($this->getUser());
         $form = $this->createForm(CommentaireType::class, $reponse, ['with_note' => false]);
         $form->handleRequest($request);
 
