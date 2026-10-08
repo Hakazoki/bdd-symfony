@@ -6,7 +6,10 @@
     <h1>Ajouter un restaurant</h1>
 
     {{ form_start(form) }}
-        {{ form_widget(form) }}
+        {{ form_row(form.nom) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.adresse) }}
+        {{ form_row(form.ville) }}
         <button type="submit">Créer</button>
     {{ form_end(form) }}
 

@@ -10,7 +10,8 @@
     {% endif %}
 
     {{ form_start(form) }}
-        {{ form_widget(form) }}
+        {{ form_row(form.nom) }}
+        {{ form_row(form.region) }}
         <button type="submit">Créer</button>
     {{ form_end(form) }}
 

@@ -6,7 +6,8 @@
     <h1>Ajouter un commentaire sur {{ restaurant.nom }}</h1>
 
     {{ form_start(form) }}
-        {{ form_widget(form) }}
+        {{ form_row(form.contenu) }}
+        {{ form_row(form.note) }}
         <button type="submit">Publier</button>
     {{ form_end(form) }}
 

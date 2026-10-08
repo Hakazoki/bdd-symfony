@@ -8,7 +8,7 @@
     <blockquote>{{ parent.contenu|nl2br }}</blockquote>
 
     {{ form_start(form) }}
-        {{ form_widget(form) }}
+        {{ form_row(form.contenu) }}
         <button type="submit">Répondre</button>
     {{ form_end(form) }}
 
