@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Restaurants{% endblock %}
+
+{% block body %}
+    <h1>Restaurants</h1>
+
+    <form method="get" action="{{ path('app_restaurant_list') }}">
+        <label for="ville">Filtrer par ville :</label>
+        <select name="ville" id="ville" onchange="this.form.submit()">
+            <option value="">Toutes les villes</option>
+            {% for ville in villes %}
+                <option value="{{ ville.id }}" {{ ville.id == villeId ? 'selected' }}>{{ ville.nom }}</option>
+            {% endfor %}
+        </select>
+        <noscript><button type="submit">Filtrer</button></noscript>
+    </form>
+
+    <ul>
+        {% for restaurant in restaurants %}
+            <li>
+                <a href="{{ path('app_restaurant_show', {id: restaurant.id}) }}">{{ restaurant.nom }}</a>
+                — {{ restaurant.ville.nom }}
+                — {{ restaurant.rating is not null ? restaurant.rating ~ '/5' : 'pas encore de note' }}
+            </li>
+        {% else %}
+            <li>Aucun restaurant.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

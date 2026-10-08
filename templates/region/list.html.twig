@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Régions{% endblock %}
+
+{% block body %}
+    <h1>Régions</h1>
+
+    <p><a href="{{ path('app_region_add') }}">Ajouter une région</a></p>
+
+    <ul>
+        {% for region in regions %}
+            <li>
+                {{ region.nom }} — {{ region.villes|length }} ville(s){% if region.villes|length %} : {{ region.villes|map(v => v.nom)|join(', ') }}{% endif %}
+
+                <form method="post" action="{{ path('app_region_delete', {id: region.id}) }}" style="display:inline" onsubmit="return confirm('Supprimer cette région ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete_region_' ~ region.id) }}">
+                    <button type="submit">Supprimer</button>
+                </form>
+            </li>
+        {% else %}
+            <li>Aucune région.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

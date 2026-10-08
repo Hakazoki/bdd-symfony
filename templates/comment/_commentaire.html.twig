@@ -1,0 +1,22 @@
+<article>
+    <p>
+        {% if commentaire.note is not null %}<strong>{{ commentaire.note }}/5</strong> — {% endif %}
+        le {{ commentaire.dateCreation|date('d/m/Y à H:i') }}
+    </p>
+    <p>{{ commentaire.contenu|nl2br }}</p>
+    <p>
+        <a href="{{ path('app_commentaire_reply', {id: commentaire.id}) }}">Répondre</a>
+    </p>
+    <form method="post" action="{{ path('app_commentaire_delete', {id: commentaire.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?')">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete_commentaire_' ~ commentaire.id) }}">
+        <button type="submit">Supprimer</button>
+    </form>
+
+    {% if commentaire.reponses|length %}
+        <blockquote>
+            {% for reponse in commentaire.reponses %}
+                {% include 'comment/_commentaire.html.twig' with {commentaire: reponse} only %}
+            {% endfor %}
+        </blockquote>
+    {% endif %}
+</article>

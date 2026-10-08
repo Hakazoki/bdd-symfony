@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un commentaire{% endblock %}
+
+{% block body %}
+    <h1>Ajouter un commentaire sur {{ restaurant.nom }}</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit">Publier</button>
+    {{ form_end(form) }}
+
+    <p><a href="{{ path('app_restaurant_show', {id: restaurant.id}) }}">&larr; Retour au restaurant</a></p>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Répondre à un commentaire{% endblock %}
+
+{% block body %}
+    <h1>Répondre à un commentaire sur {{ parent.restaurant.nom }}</h1>
+
+    <blockquote>{{ parent.contenu|nl2br }}</blockquote>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit">Répondre</button>
+    {{ form_end(form) }}
+
+    <p><a href="{{ path('app_restaurant_show', {id: parent.restaurant.id}) }}">&larr; Retour au restaurant</a></p>
+{% endblock %}
