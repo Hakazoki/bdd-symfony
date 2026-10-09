@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class VilleController extends AbstractController
 {
@@ -32,6 +33,7 @@ final class VilleController extends AbstractController
     }
 
     #[Route('/ville/add', name: 'app_ville_add')]
+    #[IsGranted('ROLE_ADMIN')]
     public function add(Request $request, EntityManagerInterface $em): Response
     {
         $ville = new Ville();
@@ -50,6 +52,7 @@ final class VilleController extends AbstractController
     }
 
     #[Route('/ville/{id}/delete', name: 'app_ville_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(Request $request, Ville $ville, EntityManagerInterface $em): Response
     {
         if (!$this->isCsrfTokenValid('delete_ville_' . $ville->getId(), $request->getPayload()->getString('_token'))) {

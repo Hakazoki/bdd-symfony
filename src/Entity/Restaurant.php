@@ -38,6 +38,9 @@ class Restaurant
     #[ORM\OrderBy(['dateCreation' => 'DESC'])]
     private Collection $commentaires;
 
+    #[ORM\ManyToOne(inversedBy: 'restaurants')]
+    private ?User $proprietaire = null;
+
     public function __construct()
     {
         $this->commentaires = new ArrayCollection();
@@ -130,6 +133,18 @@ class Restaurant
                 $commentaire->setRestaurant(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getProprietaire(): ?User
+    {
+        return $this->proprietaire;
+    }
+
+    public function setProprietaire(?User $proprietaire): static
+    {
+        $this->proprietaire = $proprietaire;
 
         return $this;
     }

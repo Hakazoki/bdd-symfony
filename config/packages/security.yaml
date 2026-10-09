@@ -8,7 +8,9 @@ security:
         - { path: ^/restaurant/\d+$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/restaurant/add$, roles: ROLE_USER }
         - { path: ^/restaurant/\d+/edit$, roles: ROLE_USER }
-        - { path: ^/restaurant/\d+/delete$, roles: ROLE_ADMIN }
+        - { path: ^/restaurant/\d+/delete$, roles: ROLE_USER }
+        - { path: ^/(ville|region)/add$, roles: ROLE_ADMIN }
+        - { path: ^/(ville|region)/\d+/delete$, roles: ROLE_ADMIN }
 
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:

@@ -13,15 +13,31 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
-    public function __construct(private UserPasswordHasherInterface $hasher)
-    {
-    }
+    public function __construct(private UserPasswordHasherInterface $hasher) {}
 
     public function load(ObjectManager $manager): void
     {
-        $user = (new User()) ->setEmail('alice@test.fr');
-        $user->setPassword($this->hasher->hashPassword($user, 'password'));
-        $manager->persist($user);
+        $thomas = (new User())->setEmail('thomas@restau-cool.bzh');
+        $thomas->setPassword($this->hasher->hashPassword($thomas, 'password'));
+        $manager->persist($thomas);
+
+        $dorian = (new User())->setEmail('dorian@restau-cool.bzh');
+        $dorian->setPassword($this->hasher->hashPassword($dorian, 'password'));
+        $manager->persist($dorian);
+
+        $gromli = (new User())->setEmail('gromli@restau-cool.bzh');
+        $gromli->setPassword($this->hasher->hashPassword($gromli, 'password'));
+        $manager->persist($gromli);
+
+        $admin = (new User())->setEmail('admin@restau-cool.bzh')->setRoles(['ROLE_ADMIN']);
+        $admin->setPassword($this->hasher->hashPassword($admin, 'password'));
+        $manager->persist($admin);
+
+        $proprietaires = [
+            'Zozan Kebab' => $thomas,
+            'Au Fût Perdu' => $dorian,
+            'Chez Gromli' => $gromli,
+        ];
 
         $regions = [];
         foreach (['Île-de-France', 'Auvergne-Rhône-Alpes', "Provence-Alpes-Côte d'Azur", 'Nouvelle-Aquitaine', 'Ille-et-Vilaine', 'Univers'] as $nom) {
@@ -58,13 +74,20 @@ class AppFixtures extends Fixture
                 ->setNom($nom)
                 ->setDescription($description)
                 ->setAdresse($adresse)
-                ->setVille($villes[$villeNom]);
+                ->setVille($villes[$villeNom])
+                ->setProprietaire($proprietaires[$nom] ?? null);
             $manager->persist($restaurant);
 
-            $commentaire = (new Commentaire())->setRestaurant($restaurant)->setAuteur($user)->setContenu('Glorpissimement glorpesque !')->setNote(5);
+            $proprietaire = $proprietaires[$nom] ?? null;
+            $auteur = $proprietaire === $thomas ? $dorian : $thomas;
+
+            $commentaire = (new Commentaire())->setRestaurant($restaurant)->setAuteur($auteur)->setContenu('Glorpissimement glorpesque !')->setNote(4);
             $manager->persist($commentaire);
-            $manager->persist((new Commentaire())->setRestaurant($restaurant)->setAuteur($user)->setParent($commentaire)->setContenu('Merci pour votre avis !'));
-            $manager->persist((new Commentaire())->setRestaurant($restaurant)->setAuteur($user)->setContenu('૮ ˶ᵔ ᵕ ᵔ˶ ა')->setNote(3));
+            $manager->persist((new Commentaire())->setRestaurant($restaurant)->setAuteur($auteur)->setContenu('૮ ˶ᵔ ᵕ ᵔ˶ ა')->setNote(5));
+
+            if ($proprietaire) {
+                $manager->persist((new Commentaire())->setRestaurant($restaurant)->setAuteur($proprietaire)->setParent($commentaire)->setContenu('Merci pour votre avis !'));
+            }
         }
 
         $manager->flush();

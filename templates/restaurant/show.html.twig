@@ -10,14 +10,17 @@
         <li>Note : {{ restaurant.rating is not null ? restaurant.rating ~ '/5' : 'pas encore de note' }}</li>
         <li>Adresse : {{ restaurant.adresse }}</li>
         <li>Ville : <a href="{{ path('app_ville_show', {id: restaurant.ville.id}) }}">{{ restaurant.ville.nom }}</a> ({{ restaurant.ville.region.nom }})</li>
+        {% if restaurant.proprietaire %}
+            <li>Propriétaire : {{ restaurant.proprietaire.email }}</li>
+        {% endif %}
     </ul>
 
-    {% if is_granted('ROLE_USER') %}
+    {% if is_granted('RESTAURANT_EDIT', restaurant) %}
         <p>
             <a href="{{ path('app_restaurant_edit', {id: restaurant.id}) }}">Modifier</a>
         </p>
     {% endif %}
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('RESTAURANT_DELETE', restaurant) %}
         <form method="post" action="{{ path('app_restaurant_delete', {id: restaurant.id}) }}" onsubmit="return confirm('Supprimer ce restaurant et ses commentaires ?')">
             <input type="hidden" name="_token" value="{{ csrf_token('delete_restaurant_' ~ restaurant.id) }}">
             <button type="submit">Supprimer le restaurant</button>

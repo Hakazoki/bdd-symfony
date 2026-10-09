@@ -1,7 +1,12 @@
 <article>
     <p>
         {% if commentaire.note is not null %}<strong>{{ commentaire.note }}/5</strong> — {% endif %}
-        {% if commentaire.auteur %}par {{ commentaire.auteur.email }}, {% endif %}
+        {% if commentaire.auteur %}
+            par {{ commentaire.auteur.email }}
+            {% if commentaire.restaurant.proprietaire and commentaire.restaurant.proprietaire.id == commentaire.auteur.id %}
+                <span title="Propriétaire du restaurant" aria-label="Propriétaire du restaurant">★</span>
+            {% endif %},
+        {% endif %}
         le {{ commentaire.dateCreation|date('d/m/Y à H:i') }}
     </p>
     <p>{{ commentaire.contenu|nl2br }}</p>

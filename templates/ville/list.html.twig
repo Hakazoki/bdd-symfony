@@ -5,17 +5,21 @@
 {% block body %}
     <h1>Villes</h1>
 
+    {% if is_granted('ROLE_ADMIN') %}
     <p><a href="{{ path('app_ville_add') }}">Ajouter une ville</a></p>
+    {% endif %}
 
     <ul>
         {% for ville in villes %}
             <li>
                 <a href="{{ path('app_ville_show', {id: ville.id}) }}">{{ ville.nom }}</a>
                 ({{ ville.region.nom }}) — {{ ville.restaurants|length }} restaurant(s)
+                {% if is_granted('ROLE_ADMIN') %}
                 <form method="post" action="{{ path('app_ville_delete', {id: ville.id}) }}" style="display:inline" onsubmit="return confirm('Supprimer cette ville ?')">
                     <input type="hidden" name="_token" value="{{ csrf_token('delete_ville_' ~ ville.id) }}">
                     <button type="submit">Supprimer</button>
                 </form>
+                {% endif %}
             </li>
         {% else %}
             <li>Aucune ville.</li>

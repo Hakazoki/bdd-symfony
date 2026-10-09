@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class RegionController extends AbstractController
 {
@@ -22,6 +23,7 @@ final class RegionController extends AbstractController
     }
 
     #[Route('/region/add', name: 'app_region_add')]
+    #[IsGranted('ROLE_ADMIN')]
     public function add(Request $request, EntityManagerInterface $em): Response
     {
         $region = new Region();
@@ -40,6 +42,7 @@ final class RegionController extends AbstractController
     }
 
     #[Route('/region/{id}/delete', name: 'app_region_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(Request $request, Region $region, EntityManagerInterface $em): Response
     {
         if (!$this->isCsrfTokenValid('delete_region_' . $region->getId(), $request->getPayload()->getString('_token'))) {

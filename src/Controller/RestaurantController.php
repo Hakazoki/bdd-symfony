@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Restaurant;
 use App\Form\RestaurantType;
+use App\Security\Voter\RestaurantVoter;
 use App\Repository\RestaurantRepository;
 use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,7 +39,7 @@ final class RestaurantController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function add(Request $request, EntityManagerInterface $em): Response
     {
-        $restaurant = new Restaurant();
+        $restaurant = (new Restaurant())->setProprietaire($this->getUser());
         $form = $this->createForm(RestaurantType::class, $restaurant);
         $form->handleRequest($request);
 
@@ -60,7 +61,7 @@ final class RestaurantController extends AbstractController
     }
 
     #[Route('/restaurant/{id}/edit', name: 'app_restaurant_edit', requirements: ['id' => '\d+'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted(RestaurantVoter::EDIT, subject: 'restaurant')]
     public function edit(Request $request, Restaurant $restaurant, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(RestaurantType::class, $restaurant);
@@ -77,7 +78,7 @@ final class RestaurantController extends AbstractController
     }
 
     #[Route('/restaurant/{id}/delete', name: 'app_restaurant_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(RestaurantVoter::DELETE, subject: 'restaurant')]
     public function delete(Request $request, Restaurant $restaurant, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete_restaurant_' . $restaurant->getId(), $request->getPayload()->getString('_token'))) {

@@ -42,9 +42,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'auteur')]
     private Collection $commentaires;
 
+    /**
+     * @var Collection<int, Restaurant>
+     */
+    #[ORM\OneToMany(targetEntity: Restaurant::class, mappedBy: 'proprietaire')]
+    private Collection $restaurants;
+
     public function __construct()
     {
         $this->commentaires = new ArrayCollection();
+        $this->restaurants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -146,6 +153,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($commentaire->getAuteur() === $this) {
                 $commentaire->setAuteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Restaurant>
+     */
+    public function getRestaurants(): Collection
+    {
+        return $this->restaurants;
+    }
+
+    public function addRestaurant(Restaurant $restaurant): static
+    {
+        if (!$this->restaurants->contains($restaurant)) {
+            $this->restaurants->add($restaurant);
+            $restaurant->setProprietaire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRestaurant(Restaurant $restaurant): static
+    {
+        if ($this->restaurants->removeElement($restaurant)) {
+            // set the owning side to null (unless already changed)
+            if ($restaurant->getProprietaire() === $this) {
+                $restaurant->setProprietaire(null);
             }
         }
 
