@@ -5,13 +5,17 @@
         le {{ commentaire.dateCreation|date('d/m/Y à H:i') }}
     </p>
     <p>{{ commentaire.contenu|nl2br }}</p>
-    <p>
-        <a href="{{ path('app_commentaire_reply', {id: commentaire.id}) }}">Répondre</a>
-    </p>
-    <form method="post" action="{{ path('app_commentaire_delete', {id: commentaire.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?')">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete_commentaire_' ~ commentaire.id) }}">
-        <button type="submit">Supprimer</button>
-    </form>
+    {% if is_granted('ROLE_USER') %}
+        <p>
+            <a href="{{ path('app_commentaire_reply', {id: commentaire.id}) }}">Répondre</a>
+        </p>
+    {% endif %}
+    {% if is_granted('ROLE_ADMIN') or (app.user and commentaire.auteur.id == app.user.id) %}
+        <form method="post" action="{{ path('app_commentaire_delete', {id: commentaire.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?')">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete_commentaire_' ~ commentaire.id) }}">
+            <button type="submit">Supprimer</button>
+        </form>
+    {% endif %}
 
     {% if commentaire.reponses|length %}
         <blockquote>

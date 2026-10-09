@@ -12,16 +12,22 @@
         <li>Ville : <a href="{{ path('app_ville_show', {id: restaurant.ville.id}) }}">{{ restaurant.ville.nom }}</a> ({{ restaurant.ville.region.nom }})</li>
     </ul>
 
-    <p>
-        <a href="{{ path('app_restaurant_edit', {id: restaurant.id}) }}">Modifier</a>
-    </p>
-    <form method="post" action="{{ path('app_restaurant_delete', {id: restaurant.id}) }}" onsubmit="return confirm('Supprimer ce restaurant et ses commentaires ?')">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete_restaurant_' ~ restaurant.id) }}">
-        <button type="submit">Supprimer le restaurant</button>
-    </form>
+    {% if is_granted('ROLE_USER') %}
+        <p>
+            <a href="{{ path('app_restaurant_edit', {id: restaurant.id}) }}">Modifier</a>
+        </p>
+    {% endif %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <form method="post" action="{{ path('app_restaurant_delete', {id: restaurant.id}) }}" onsubmit="return confirm('Supprimer ce restaurant et ses commentaires ?')">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete_restaurant_' ~ restaurant.id) }}">
+            <button type="submit">Supprimer le restaurant</button>
+        </form>
+    {% endif %}
 
     <h2>Commentaires ({{ restaurant.commentaires|length }})</h2>
-    <p><a href="{{ path('app_commentaire_add', {id: restaurant.id}) }}">Ajouter un commentaire</a></p>
+    {% if is_granted('ROLE_USER') %}
+        <p><a href="{{ path('app_commentaire_add', {id: restaurant.id}) }}">Ajouter un commentaire</a></p>
+    {% endif %}
 
     {% for commentaire in restaurant.commentaires|filter(c => c.parent is null) %}
         {% include 'comment/_commentaire.html.twig' %}

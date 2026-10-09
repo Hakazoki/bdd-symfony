@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class RestaurantController extends AbstractController
 {
@@ -34,6 +35,7 @@ final class RestaurantController extends AbstractController
     }
 
     #[Route('/restaurant/add', name: 'app_restaurant_add')]
+    #[IsGranted('ROLE_USER')]
     public function add(Request $request, EntityManagerInterface $em): Response
     {
         $restaurant = new Restaurant();
@@ -58,6 +60,7 @@ final class RestaurantController extends AbstractController
     }
 
     #[Route('/restaurant/{id}/edit', name: 'app_restaurant_edit', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, Restaurant $restaurant, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(RestaurantType::class, $restaurant);
@@ -74,6 +77,7 @@ final class RestaurantController extends AbstractController
     }
 
     #[Route('/restaurant/{id}/delete', name: 'app_restaurant_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(Request $request, Restaurant $restaurant, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete_restaurant_' . $restaurant->getId(), $request->getPayload()->getString('_token'))) {

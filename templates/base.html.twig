@@ -21,7 +21,9 @@
     <body>
         <nav>
             <a href="{{ path('app_restaurant_list') }}">Restaurants</a> |
-            <a href="{{ path('app_restaurant_add') }}">Ajouter un restaurant</a> |
+            {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('app_restaurant_add') }}">Ajouter un restaurant</a> |
+            {% endif %}
             <a href="{{ path('app_ville_list') }}">Villes</a> |
             <a href="{{ path('app_region_list') }}">Régions</a>
             {% if app.user %}

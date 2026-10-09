@@ -55,6 +55,10 @@ final class CommentaireController extends AbstractController
     #[Route('/commentaire/{id}/delete', name: 'app_commentaire_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function delete(Request $request, Commentaire $commentaire, EntityManagerInterface $em): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && $commentaire->getAuteur() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
         $restaurantId = $commentaire->getRestaurant()->getId();
 
         if ($this->isCsrfTokenValid('delete_commentaire_' . $commentaire->getId(), $request->getPayload()->getString('_token'))) {
