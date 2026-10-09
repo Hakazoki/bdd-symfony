@@ -33,7 +33,7 @@ security:
         main:
             login_throttling:
                 max_attempts: 3
-                interval: 60
+                interval: '60 seconds'
             lazy: true
             provider: app_user_provider
             form_login:
