@@ -11,12 +11,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Message\NouveauCommentaire;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 final class CommentaireController extends AbstractController
 {
     #[Route('/restaurant/{id}/commentaire/add', name: 'app_commentaire_add', requirements: ['id' => '\d+'])]
     #[IsGranted('ROLE_USER')]
-    public function add(Request $request, Restaurant $restaurant, EntityManagerInterface $em): Response
+    public function add(Request $request, Restaurant $restaurant, EntityManagerInterface $em, MessageBusInterface $bus): Response
     {
         $commentaire = (new Commentaire())->setRestaurant($restaurant)->setAuteur($this->getUser());
         $form = $this->createForm(CommentaireType::class, $commentaire);
@@ -25,6 +27,7 @@ final class CommentaireController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($commentaire);
             $em->flush();
+            $bus->dispatch(new NouveauCommentaire($commentaire->getId()));
             $this->addFlash('success', 'Commentaire ajouté.');
 
             return $this->redirectToRoute('app_restaurant_show', ['id' => $restaurant->getId()]);
